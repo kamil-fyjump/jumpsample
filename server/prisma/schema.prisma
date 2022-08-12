@@ -1,0 +1,64 @@
+datasource postgres {
+  provider = "postgresql"
+  url      = env("POSTGRESQL_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  createdAt DateTime @default(now())
+  firstName String?
+  id        String   @id @default(cuid())
+  lastName  String?
+  password  String
+  roles     String[]
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
+
+model Customer {
+  createdAt   DateTime                  @default(now())
+  desiredRole EnumCustomerDesiredRole[]
+  email       String?
+  firstName   String?
+  id          String                    @id @default(cuid())
+  lastName    String?
+  phone       String?
+  scores      Score[]
+  updatedAt   DateTime                  @updatedAt
+}
+
+model Score {
+  createdAt DateTime    @default(now())
+  id        String      @id @default(cuid())
+  roleScore RoleScore[]
+  updatedAt DateTime    @updatedAt
+  userId    Customer?   @relation(fields: [userIdId], references: [id])
+  userIdId  String?
+}
+
+model RoleScore {
+  backend         Float?
+  businessAnalyst Float?
+  createdAt       DateTime @default(now())
+  dataScience     Float?
+  frontend        Float?
+  id              String   @id @default(cuid())
+  qa              Float?
+  saleEngineer    Float?
+  scores          Score[]
+  uiUx            Float?
+  updatedAt       DateTime @updatedAt
+}
+
+enum EnumCustomerDesiredRole {
+  Frontend
+  Backend
+  DataScience
+  BusinessAnalyst
+  UiUx
+  Qa
+  SalesEngineer
+}
